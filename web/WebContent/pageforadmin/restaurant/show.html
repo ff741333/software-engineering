@@ -1,0 +1,93 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>我的餐厅</title>
+    <link rel="stylesheet" type="text/css" href="../../layui/css/layui.css">
+    <script src="../../layui/layui.js" charset="UTF-8"></script>
+</head>
+<body>
+<form class="layui-form" action="">
+<div id="guide_panel">
+    <blockquote class="layui-elem-quote">我的餐厅</blockquote>
+    <ul class="layui-timeline">
+        <li class="layui-timeline-item">
+            <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
+            <div class="layui-timeline-content layui-text">
+                <h3 class="layui-timeline-title">盈利明细</h3>
+                <p>
+                  <div class="layui-form-item">
+                  <div class="layui-inline">
+                   <select name="year" lay-verify="required">
+                     <option value="">请选择年份</option>
+                     <option value="2018">2018年</option>
+                     <option value="2019">2019年</option>
+                     <option value="2020">2020年</option>
+                   </select>  
+                   </div> 
+                   <div class="layui-inline">
+                   <select name="month" lay-verify="required">
+                     <option value="">请选择月份</option>
+                     <option value="01">1月份</option>
+                     <option value="02">2月份</option>
+                     <option value="03">3月份</option>
+                     <option value="04">4月份</option>
+                     <option value="05">5月份</option>
+                     <option value="06">6月份</option>
+                     <option value="07">7月份</option>
+                     <option value="08">8月份</option>
+                     <option value="09">9月份</option>
+                     <option value="10">10月份</option>
+                     <option value="11">11月份</option>
+                     <option value="12">12月份</option>                                          
+                   </select> 
+                   </div>
+                   <button class="layui-btn" lay-submit lay-filter="select">查询</button>  
+                   </div>
+                </p>
+            </div>
+        </li>
+    </ul>
+</div>
+</form>
+
+<div class="layui-form" id = "show">
+  <table class="layui-table">
+  </table> 
+ </div>        
+</body> 
+
+
+<script>
+//Demo
+layui.use(['form','table'], function(){
+  var form = layui.form;
+  var table = layui.table;
+  var $ = layui.$
+  //监听提交
+  form.on('submit(select)', function(data){
+	  $.ajax({
+          url:'../../selectServlet',
+          data:data.field,
+          dataType:'text',
+          type:'post',
+          success:function (data) {
+        	  table.render({
+        		    elem: '#show'
+        		    ,data: JSON.parse(data)
+        		    ,cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+        		    ,cols: [[
+        		      {field:'ProfitID', width:80, title: 'ID', sort: true}
+        		      ,{field:'Date', width:200, title: '日期', sort: true}
+        		      ,{field:'Income', title: '收入', sort: true}
+        		      ,{field:'Cost', title: '支出', sort: true}
+        		      ,{field:'Profit', title: '利润', sort: true}
+        		    ]]
+        		  });
+          }
+      })
+      return false;
+  });
+});
+</script>
+

@@ -1,0 +1,15 @@
+{
+		"contentManagement": [{
+		    "title": "测试仓库",
+			"icon": "&#xe63c;",
+			"href": "pageforsupplier/store.html",
+			"spread": false
+		},
+		{
+		    "title": "测试进货",
+			"icon": "&#xe698;",
+			"href": "pageforsupplier/instore.html",
+			"spread": false
+		}
+		]
+}

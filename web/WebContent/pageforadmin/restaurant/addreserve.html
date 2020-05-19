@@ -1,0 +1,123 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>预定信息</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" type="text/css" href="../../layui/css/layui.css">
+    <script src="../../layui/layui.js" charset="UTF-8"></script>
+</head>
+<body>
+
+<div id="guide_panel">
+    <blockquote class="layui-elem-quote">我的餐厅</blockquote>
+    <ul class="layui-timeline">
+        <li class="layui-timeline-item">
+            <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
+            <div class="layui-timeline-content layui-text">
+                <h3 class="layui-timeline-title">预定信息</h3>
+                <p>
+                <form class="layui-form" action="">
+                 <div class="layui-form-item">
+                   <div class="layui-inline">
+                      <label class="layui-form-label">日期：</label>
+                         <div class="layui-input-inline" style="width:250px;">
+                              <input name="date1" type="text" lay-verify="required"  lay-reqtext="客户几号来呀？" class="layui-input" id="date1" placeholder="请选择或输入（格式为yyyy-mm-dd）" autocomplete="off">
+                          </div>
+                          </div>
+
+
+                     
+                           <div class="layui-inline" align="left">
+                             <label class="layui-form-label" >时间：</label>
+                               <div class="layui-input-inline" style="width:250px;">
+                                    <input name="date2" type="text" lay-verify="required"  lay-reqtext="客户几时来呀？" class="layui-input" id="date2" placeholder="请选择或输入（格式为hh:mm）" autocomplete="off">
+                               </div>
+                             </div>
+                             <br>
+                                <div class="layui-inline">
+                                  <label class="layui-form-label" >桌号：</label>
+                                    <div class="layui-input-inline">
+                                         <select name="desk" lay-verify="required"  lay-reqtext="客户坐哪桌呀？" lay-search="">
+                                          <option value="">选择或输入桌号</option>
+                                          <option value="1">1号包厢</option>
+                                          <option value="2">2号包厢</option>
+                                          <option value="3">3号卡座</option>
+                                          <option value="4">4号卡座</option>
+                                          <option value="5">5号卡座</option>
+                                          <option value="6">6号卡座</option>
+                                          <option value="7">7号卡座</option>
+
+                                     </select>
+                                   </div>
+                                </div>
+                                
+                                
+                                <br>
+                                 <div class="layui-inline">
+                                  <label class="layui-form-label">客户姓名：</label>
+                                        <div class="layui-input-block">
+                                        <input type="text" name="customername" lay-verify="required" lay-reqtext="在下哪位，报上名来！" placeholder="请输入" autocomplete="off" class="layui-input">  
+                                      </div>
+                                    </div>
+                                  <div class="layui-inline">
+                                  <label class="layui-form-label">客户电话：</label>
+                                        <div class="layui-input-block">
+                                        <input type="text" name="customerphonenum" lay-verify="required" lay-reqtext="留个电话呗！" placeholder="请输入" autocomplete="off" class="layui-input">  
+                                      </div>
+                                    </div>
+                                    
+                                  <div class="layui-inline">
+                                 <button class="layui-btn" lay-submit lay-filter="add">添加预定信息</button>  
+                                 </div>
+                                  </br>
+                            
+                            
+                             </div>
+                   
+                   
+                          </form >
+                           </p>
+                   </div>
+                        
+               
+           
+        </li>
+    </ul>
+</div>
+</body>
+
+
+ 
+
+<script>
+//Demo
+layui.use(['laydate','form','table'], function(){
+  var form = layui.form;
+  var $ = layui.$;
+  var laydate = layui.laydate;
+  //监听提交
+    laydate.render({
+    elem: '#date1'
+  });    
+    laydate.render({
+        elem: '#date2'
+        ,type: 'time'
+        ,format: 'H:m'
+      });   
+  form.on('submit(add)', function(data){
+	  $.ajax({
+          url:'../../addreserve',
+          data:data.field,
+          dataType:'text',
+          type:'post',
+          success:function (data) {
+        	  layer.alert(data);
+          }
+      })
+      return false;
+  });
+});
+
+</script>
+
