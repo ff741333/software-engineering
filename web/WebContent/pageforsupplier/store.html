@@ -115,50 +115,43 @@ layui.use(['table','layer'], function(){
         type: 1
         ,title: false //不显示标题栏
         ,closeBtn: false
-      //  ,area:['600px','700px']
+        ,area: ['700px','800px']
         ,shade: 0.8
         ,id: 'LAY_layuipro' //设定一个id，防止重复弹出
-        ,btn: ['入库', '删除','取消']
+        ,btn: ['删除','取消']
         ,btnAlign: 'c'
         ,moveType: 1 //拖拽模式，0或者1
-        ,content: '<div id= "show"style="padding: 10px; line-height: 22px; background-color: #F0F0F0; font-weight: 700;"><img width=330 height=270 src="../images/foods/'+data.FoodsImg+'" alt="1"><ul class="layui-timeline"><li class="layui-timeline-item"><i class="layui-icon layui-timeline-axis"></i><div class="layui-timeline-content layui-text"><h3 id = "title" class="layui-timeline-title">'+data.FoodsName+'</h3><p>这是个好菜！</p></div></li></ul><div class="layui-footer footer"><form class="layui-form layui-row" name="numform"><div class="layui-col-md12 layui-col-xs12"><div class="layui-form-item"><label class="layui-form-label"><h3>数量</h3></label><div class="layui-input-block"><input type="text" placeholder="1" class="layui-input" name="num" id="num"></div></div></div><div class="layui-col-md12 layui-col-xs12"><div class="layui-form-item"><label class="layui-form-label"><h3>入库单价</h3></label><div class="layui-input-block"><input type="text" placeholder="请输入单价" class="layui-input" name="price" id="price"></div></div></div></form></div></div>'//'<div style="padding: 10px; line-height: 22px; background-color: #393D49; color: #fff; font-weight: 700;"><img src="../images/userface1.jpg" alt="1"></div>'
+        ,content: '<div id= "show"style="padding: 10px; line-height: 22px; background-color: #F0F0F0; font-weight: 700;"><img width=330 height=270 src="../images/foods/'+data.FoodsImg+'" alt="1"><ul class="layui-timeline"><li class="layui-timeline-item"><i class="layui-icon layui-timeline-axis"></i><div class="layui-timeline-content layui-text"><h3 id = "title" class="layui-timeline-title">'+data.FoodsName+'</h3><p>这是个好菜！</p></div></li></ul><table class="layui-table" lay-filter = "show"  id = "show" ></table></div>'//<table class="layui-table" lay-data="{height:315, url:\'../selectstore?Id='+data.FoodsID+'\', page:true, id:\'instore\'}" lay-filter="instore"><thead><tr><th lay-data="{field:\'name\', width:80}">种类</th><th lay-data="{field:\'num\', width:200, sort: true}">入库数量</th><th lay-data="{field:\'storeprice\', sort: true}">入库单价</th><th lay-data="{field:\'instoredate\',sort: true}">入库时间</th><th lay-data="{field:\'submitdate\',sort: true}">入库订单时间</th></tr></thead></table></div>'//'<div style="padding: 10px; line-height: 22px; background-color: #393D49; color: #fff; font-weight: 700;"><img src="../images/userface1.jpg" alt="1"></div>'
         ,success: function(layero,index){
         	//changeHtml();
-   
-
+        	$.ajax({
+                url:'../selectstore',
+                type:'post',
+                dataType:'text',
+                data:{'Id':data.FoodsID},  
+               // asny:false,
+                success:function(data){
+            		  table.render({
+              		    elem: '#show'
+                        ,page:true
+                        ,initSort: {
+                            field: 'submitdate' //排序字段，对应 cols 设定的各字段名
+                            ,type: 'desc' //排序方式  asc: 升序、desc: 降序、null: 默认排序
+                          }
+              		    ,data:JSON.parse(data)
+              		    ,cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+              		    ,cols: [[
+              		      {field:'name', width:80, title:'种类'}
+              		      ,{field:'num', width:200, title: '入库数量', sort: true}
+              		      ,{field:'storeprice', title: '入库单价', sort: true}
+              		      ,{field:'instoredate', title: '入库时间', sort: true}
+              		      ,{field:'submitdate', title: '入库订单时间', sort: true}
+              		    ]]
+              		  });
+                	}
+                });
         }
-        ,yes: function(){
-        	var num;
-        	var price;
-        	if($("#num").val()=="")num=1;
-        	else num=$("#num").val();
-        	if($("#price").val()=="") layer.alert("请输入单价");
-        	else {
-        		price=$("#price").val();
-        	 $.ajax({
-                 url:'../store',
-                 type:'post',
-                 dataType:'text',
-                 data:{
-                     Id:data.FoodsID,
-                     num:num,
-                     price:price
-                 },
-                 success:function(data){
-                 	if(data == 1){
-                 		
-                 		ListTable1.reload({ url: '../showfood2' });
-                        layer.closeAll();
-	                        layer.msg("入库成功！");
-	                        }
-                 	}
-                 });
-        	}
-
-
-           	
-      }
-      ,btn2: function(){
+        ,yes: function(){      
        //删除按钮
     	  $.ajax({
               url:'../deletefood',
