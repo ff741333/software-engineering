@@ -1,0 +1,239 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>菜品</title>
+    <link rel="stylesheet" type="text/css" href="../layui/css/layui.css">
+    <link rel="stylesheet" href="../css/test.css">
+    <script src="../layui/layui.js" charset="UTF-8"></script>
+</head>
+<body>
+
+
+<div >               
+                <div id="guide_panel">
+    <blockquote class="layui-elem-quote">
+            <h2 >菜品列表</h2>
+            <div class="demoTable">
+                                                           搜索菜名：
+            <div class="layui-inline">
+             <input class="layui-input" name="id" id="demoReload" autocomplete="off">
+            </div>
+            <button class="layui-btn" data-type="reload">搜索</button>
+            </div>
+    </blockquote>
+</div>
+        <table id="List1" lay-filter="List1"></table>
+</div>
+
+</body>
+
+<script>
+layui.use(['table','layer'], function(){
+  var table = layui.table;
+  var layer = layui.layer;
+  var $ = layui.$;
+  
+
+  /*
+   * 数据表格:定义表头数据
+   * @type {{}}
+   */
+  var lan = {};
+  lan.cpbm = "菜品编号";
+  lan.cpmc = "菜品名称";
+  lan.ckjj = "价格";
+  lan.spbh = "菜品编号";
+  lan.spmc = "菜品名称";
+  lan.sl = "数量";
+  lan.dj = "单价";
+  lan.je = "金额";
+  lan.cz = "操作";
+  /**
+   *得到数据库中food表的数据
+   * showfood是servlet
+   */
+  function getdata(){
+  	var da;
+         $.ajax({
+	          url:'../showshopcar',
+	          dataType:'text',
+	          type:'post',
+	          async:false,
+	           success: function (data) {
+	                result=data;
+	            }
+	        });
+	        return result;
+  }
+ var goodsDataStr = getdata();
+ var cardataArrey = JSON.parse(goodsDataStr);
+ var cardata = cardataArrey.data;
+  /**
+   * 购物车数据
+   * @type {Array}
+   */
+  var goodsData = [];
+  /**
+   * 页面加载时执行
+   */
+  $(function () {
+    //  console.table(GoodsData);
+   
+      /**
+       * List1数据表格渲染(商品列表)
+       */
+
+      var ListTable1 = table.render({
+    	  id:'reload',  //重载id
+    	  url:'../showfood2',
+        //  data:GoodsData,
+          elem: '#List1',
+          cellMinWidth: 95,
+          //height: 'full-190',
+          height: '460',
+          minheight:430,
+       //   page: true,
+          cols: [
+              [
+                  { hide:true,field: 'FoodsID', title: lan.cpbm, align: 'left' },
+                  { hide:true,field: 'FoodsImg', title: '图片', align: 'left' },
+                  { field: 'FoodsName', title: lan.cpmc, align: 'left' , templet: function (d) {
+                	  var j=-1;
+                	  for(var i=0;i<cardata.length;i++)
+               	  {
+                	  	if(d.FoodsName==cardata[i].FoodsName)  j=i;
+               	  }
+                	  if(j==-1) return d.FoodsName;
+               	  else 
+                          return d.FoodsName +"<span class=\"layui-badge\">"+cardata[j].num+"</span>";
+                          
+                      }
+            	  },
+                  {
+                    field: 'XPrice', title: lan.ckjj, align: 'right', templet: function (d) {
+                          return "<span style='color:red'>￥" + d.XPrice + "</span>";
+                      }
+                  },
+              ]
+          ]
+      });
+ 
+
+  
+  //监听行单击事件（双击事件为：rowDouble）
+  table.on('row(List1)', function(obj){
+    var data = obj.data;
+    var imgstr = null;
+
+    
+ /*   $.ajax({
+        url:'../showfoodimg',
+        type:'post',
+        dataType:'text',
+        data:data,
+        success:function(data){
+        	imgstr=data;
+        }
+        });*/
+
+    layer.open({
+        type: 1
+        ,title: false //不显示标题栏
+        ,closeBtn: false
+      //  ,area:['600px','700px']
+        ,shade: 0.8
+        ,id: 'LAY_layuipro' //设定一个id，防止重复弹出
+        ,btn: ['加入购物车', '取消']
+        ,btnAlign: 'c'
+        ,moveType: 1 //拖拽模式，0或者1
+        ,content: '<div id= "show"style="padding: 10px; line-height: 22px; background-color: #F0F0F0; font-weight: 700;"><img width=330 height=270 src="../images/foods/'+data.FoodsImg+'" alt="1"><ul class="layui-timeline"><li class="layui-timeline-item"><i class="layui-icon layui-timeline-axis"></i><div class="layui-timeline-content layui-text"><h3 id = "title" class="layui-timeline-title">'+data.FoodsName+'</h3><p>这是个好菜！</p></div></li></ul><div class="layui-footer footer"><form class="layui-form layui-row" name="numform"><div class="layui-col-md12 layui-col-xs12"><div class="layui-form-item"><label class="layui-form-label"><h2>数量</h2></label><div class="layui-input-block"><input type="text" placeholder="1" class="layui-input" name="num" id="num"></div></div></div></form></div></div>'//'<div style="padding: 10px; line-height: 22px; background-color: #393D49; color: #fff; font-weight: 700;"><img src="../images/userface1.jpg" alt="1"></div>'
+        ,success: function(layero,index){
+        	//changeHtml();
+   
+
+        }
+        ,yes: function(){
+        	var num;
+        	if($("#num").val()=="")num=1;
+        	else num=$("#num").val();
+            var j=-1;
+            var foodnum;
+       	  for(var i=0;i<cardata.length;i++)
+      	  {
+       	  	if(data.FoodsName==cardata[i].FoodsName)  
+       	  		{       	 
+       	  		cardata[i].num=parseInt(num)+parseInt(cardata[i].num,10);
+       	  		foodnum= cardata[i].num;
+       	  		j=i;
+       	  		}
+      	  }
+       	  if(j==-1){
+           	  		var food=data;
+           	  		food.num=num;
+           	  	     cardata.push(food);
+       	  }
+        	 $.ajax({
+                 url:'../addcar',
+                 type:'post',
+                 dataType:'text',
+                 data:{
+                     Id:data.FoodsID,
+                     num:num
+                 },
+                 success:function(data){
+                 	if(data == 1){
+                 		
+                 		ListTable1.reload({ data: cardata });
+                        layer.closeAll();
+	                        layer.msg("订单提交成功！");
+	                        }
+                 	}
+                 });
+
+
+           	
+      }
+      ,btn2: function(){
+        layer.closeAll();
+      }
+        ,cancel: function(){ 
+            //右上角关闭回调
+            
+            //return false 开启该代码可禁止点击该按钮关闭
+         }
+        ,closeBtn:2
+      });
+    //标注选中样式
+   // obj.tr.addClass('layui-table-click').siblings().removeClass('layui-table-click');
+  });
+  
+  //查询菜品表
+  $ , active = {
+		    reload: function(){
+		      var demoReload = $('#demoReload');
+		      
+		      //执行重载
+		      table.reload('reload', {
+		        page: {
+		          curr: 1 //重新从第 1 页开始
+		        }
+		        ,where: {
+		        	key: {
+		                FoodName: demoReload.val()
+		              }
+		        }
+		      }, 'data');
+		    }
+		  };
+		  
+	$('.demoTable .layui-btn').on('click', function(){
+		    var type = $(this).data('type');
+		    active[type] ? active[type].call(this) : '';
+		  });
+  });
+});
+
+</script>
+
+</html>

@@ -1,0 +1,164 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>进货信息</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" type="text/css" href="../layui/css/layui.css">
+    <script src="../layui/layui.js" charset="UTF-8"></script>
+</head>
+<body>
+<form class="layui-form" action="">
+<div id="guide_panel">
+    <blockquote class="layui-elem-quote">我的仓库</blockquote>
+    <ul class="layui-timeline">
+        <li class="layui-timeline-item">
+            <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
+            <div class="layui-timeline-content layui-text">
+                <h3 class="layui-timeline-title">填写进货信息</h3>
+                <p>
+                  <div class="layui-form-item">
+                  <div class="layui-inline">
+                  <label class="layui-form-label">品种：</label>
+                     <div class="layui-input-inline">
+                   <select name="Id" id="food" lay-verify="required" lay-search>
+                     <option value="">请选择蔬果</option>
+                   </select>  
+                   </div>
+                   </div> 
+                    <div class="layui-inline">
+                      <label class="layui-form-label">数量：</label>
+                     <div class="layui-input-inline">
+                    <input type="text" name="num"  lay-verify="required|number|operationCount" placeholder="请输入数量" autocomplete="off" class="layui-input">  
+                    </div>  
+                    </div>
+                    <div class="layui-inline">
+                    <label class="layui-form-label">单价：</label>
+                     <div class="layui-input-inline">
+                    <input type="text" name="price"  lay-verify="required|number" placeholder="请输入单价" autocomplete="off" class="layui-input">    
+                    </div>
+                    </div>
+                     <div class="layui-inline">
+                    <label class="layui-form-label">进货时间：</label>
+                     <div class="layui-input-inline">
+                    <input type="text" class="layui-input" lay-verify="required|date" name="time" id="time" placeholder="yyyy-MM-dd">
+                     </div>
+                    </div>
+                   <button class="layui-btn" lay-submit lay-filter="addstore">确认</button>  
+                   <button class="layui-btn" lay-reset >重设</button>  
+                   </div>
+            </div>
+        </li>
+    </ul>
+</div>
+</form>
+  <table class="layui-table" lay-filter = "show"  id = "show" ></table> 
+</body>
+<script type="text/javascript">
+layui.use(['form','laydate','table'], function(){
+	  var form = layui.form; 
+	  var laydate = layui.laydate;
+	  var table = layui.table;
+	  var $ = layui.$;
+	  form.render();
+	  
+	  $.ajax({
+          url: '../showfood2',   //后台数据地址
+          success: function (data) {
+        	  var jsondata = JSON.parse(data);
+             $.each(jsondata.data,function (index,item) {   //循环后台返回的json数据
+                  //new Option方法是新建一个option，第一个参数是需要显示的值，第二个参数是option的value值,然后append到下拉框中。
+                 $('#food').append(new Option(item.FoodsName,item.FoodsID));
+             })
+             form.render("select");
+          }
+      });
+	  
+      laydate.render({
+    	    elem: '#time'
+    	  });
+	  
+	  //数字验证
+	  form.verify({
+		  operationCount: [
+				/^[+]{0,1}(\d+)$/,
+				'数量必须为整数！'
+			],
+		  date:[
+			  /^(\d{4})[-\/](\d{1}|0\d{1}|1[0-2])([-\/](\d{1}|0\d{1}|[1-2][0-9]|3[0-1]))*$/,
+			  '日期格式错误'
+		  ]
+		});
+	  //提交信息
+	  form.on('submit(addstore)', function(data){
+		  var foodid = data.field.Id;
+		  
+		  $.ajax({
+              url:'../store',
+              type:'post',
+              dataType:'text',
+              data:data.field,
+              success:function(data){
+              	if(data == 1){             		
+                     layer.closeAll();
+	                        layer.msg("入库成功！");
+	                        $.ajax({
+	                            url:'../selectstore',
+	                            type:'post',
+	                            dataType:'text',
+	                            data:{'Id':foodid},                       
+	                            success:function(data){
+	                        		  table.render({
+	                          		    elem: '#show'
+	                                    ,initSort: {
+	                                        field: 'submitdate' //排序字段，对应 cols 设定的各字段名
+	                                        ,type: 'desc' //排序方式  asc: 升序、desc: 降序、null: 默认排序
+	                                    }
+	                          		    ,data:JSON.parse(data)
+	                          		    ,cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+	                          		    ,cols: [[
+	                          		      {field:'name', width:80, title:'种类'}
+	                          		      ,{field:'num', width:200, title: '入库数量', sort: true}
+	                          		      ,{field:'storeprice', title: '入库单价', sort: true}
+	                          		      ,{field:'instoredate', title: '入库时间', sort: true}
+	                          		      ,{field:'submitdate', title: '入库订单时间', sort: true}
+	                          		    ]]
+	                          		  });
+	                            	}
+	                            });
+	                        
+              	}
+              }
+              });
+		  $.ajax({
+              url:'../selectstore',
+              type:'post',
+              dataType:'text',
+              data:data.field,                       
+              success:function(data){
+          		  table.render({
+            		    elem: '#show'
+            		    ,id:'reload'
+            		    ,data:JSON.parse(data)
+            		    ,page:false
+          	            ,async:false
+            		    ,cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+            		    ,cols: [[
+            		      {field:'name', width:80, title:'种类'}
+            		      ,{field:'num', width:200, title: '入库数量', sort: true}
+            		      ,{field:'storeprice', title: '入库单价', sort: true}
+            		      ,{field:'instoredatse', title: '入库时间', sort: true}
+            		      ,{field:'submitdate', title: '入库订单时间', sort: true}
+            		    ]]
+            		  });
+              	}
+              });
+          
+	      return false;
+	  });
+
+	  
+
+});
+</script>
+</html>

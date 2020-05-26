@@ -1,0 +1,133 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>预定信息</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" type="text/css" href="../../layui/css/layui.css">
+    <script src="../../layui/layui.js" charset="UTF-8"></script>
+</head>
+<body>
+
+<div id="guide_panel">
+    <blockquote class="layui-elem-quote">我的餐厅</blockquote>
+    <ul class="layui-timeline">
+        <li class="layui-timeline-item">
+            <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
+            <div class="layui-timeline-content layui-text">
+                <h3 class="layui-timeline-title">预定信息</h3>
+                <p>
+                <form class="layui-form" action="">
+                 <div class="layui-form-item">
+                   <div class="layui-inline">
+                      <label class="layui-form-label">请选择日期</label>
+                         <div class="layui-input-inline">
+                              <input name="date" type="text" class="layui-input" id="date" placeholder="yyyy-mm-dd">
+                          </div>
+                      <div class="layui-inline">
+                               <label class="layui-form-label">选择桌号</label>
+                                    <div class="layui-input-inline">
+                                         <select name="desk" lay-verify="" lay-search="">
+                                          <option value="">选择或输入桌号</option>
+                                          <option value="1">1号包厢</option>
+                                          <option value="2">2号包厢</option>
+                                          <option value="3">3号卡座</option>
+                                          <option value="4">4号卡座</option>
+                                          <option value="5">5号卡座</option>
+                                          <option value="6">6号卡座</option>
+                                          <option value="7">7号卡座</option>
+
+                                     </select>
+                                   </div>
+                                </div>
+                                 <div class="layui-inline">
+                                 <button class="layui-btn" lay-submit lay-filter="select">查询</button>  
+                                 </div>
+                      </div>
+                   </div>
+                          </form >
+                           </p>
+                   </div>
+                        
+               
+           
+        </li>
+    </ul>
+</div>
+
+
+
+                       
+
+  <table class="layui-table" lay-filter = "show"  id = "show" >
+  </table>   
+ 
+<script type="text/html" id="barDemo">
+  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+
+<script>
+//Demo
+layui.use(['laydate','form','table'], function(){
+  var form = layui.form;
+  var table = layui.table;
+  var $ = layui.$;
+  var laydate = layui.laydate;
+  //监听提交
+    laydate.render({
+    elem: '#date'
+  });
+  //监听工具条
+    table.on('tool(show)', function(obj){
+      var data = obj.data;
+      if(obj.event === 'del')
+        layer.confirm('真的删除行么', function(index){
+          obj.del();
+          $.ajax({
+              url:'deletereserve',
+              data:data,
+              dataType:'text',
+              type:'post',
+              success:function (data) {
+            	  layer.alert(data)
+                   }
+               })
+              })
+          layer.close(index);
+         
+        });      
+  form.on('submit(select)', function(data){
+	  $.ajax({
+          url:'../../selectreserve',
+          data:data.field,
+          dataType:'text',
+          type:'post',
+          success:function (data) {
+        	  table.render({
+        		    elem: '#show'
+        		    ,page:true
+        		    ,data: JSON.parse(data)
+        		    ,cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+        		    ,cols: [[
+        		      {field:'ReserveID', width:80, title: 'ID', sort: true}
+        		      ,{field:'DeskID', width:200, title: '桌号', sort: true}
+        		      ,{field:'ReserveTime', title: '预定时间',sort: true}
+        		      ,{field:'CustomerName', title: '顾客姓名'}
+        		      ,{field:'CustomerPhone', title: '顾客电话'}
+        		      ,{field:'AdminName', title: '服务员姓名'}
+        		      ,{fixed: 'right', width:178, align:'center', toolbar: '#barDemo'}
+        		    ]]
+        		  });
+
+          }
+      })
+      return false;
+  });
+});
+
+ /* 
+
+ */
+</script>
+
+</body>

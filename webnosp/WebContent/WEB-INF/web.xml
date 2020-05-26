@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
+  <filter>
+    <filter-name>PrivilegesFilter</filter-name>
+    <filter-class>com.filter.PrivilegesFilter</filter-class>
+  </filter>
+  <filter>
+    <filter-name>UsersFilter</filter-name>
+    <filter-class>com.filter.UsersFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>UsersFilter</filter-name>
+    <url-pattern>*.html</url-pattern>
+    <servlet-name>logout</servlet-name>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>PrivilegesFilter</filter-name>
+    <url-pattern>/indexadmin.html</url-pattern>
+    <url-pattern>/indexuser.html</url-pattern>
+    <url-pattern>/indexsupplier.html</url-pattern>
+    <url-pattern>/pageforadmin/*</url-pattern>
+    <url-pattern>/pageforsupplier/*</url-pattern>
+    <url-pattern>/page/*</url-pattern>
+  </filter-mapping>
+  <welcome-file-list>
+    <welcome-file>testLogin.html</welcome-file>
+  </welcome-file-list>
+</web-app>
