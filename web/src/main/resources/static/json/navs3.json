@@ -1,0 +1,54 @@
+[
+		{
+			"title": "我的餐厅",
+			"icon": "icon-text",
+			"href": "pageforadmin/restaurant/show.html",
+			"spread": false
+		},
+		{
+			"title": "餐厅明细",
+			"icon": "&#xe634;",
+			"spread": false,
+			"children": [
+				{
+					"title": "预定信息",
+					"icon": "&#xe61c;",
+		         	"href": "pageforadmin/restaurant/reserve.html",
+					"spread": false
+				},
+								{
+					"title": "添加预定信息",
+					"icon": "&#xe609;",
+					"href": "pageforadmin/restaurant/addreserve.html",
+					"spread": false
+				},
+				{
+					"title": "当前桌台",
+					"icon": "&#xe609;",
+					"href": "pageforadmin/restaurant/desk.html",
+					"spread": false
+				}
+			]
+		},
+		{
+			"title": "其他页面",
+			"icon": "&#xe630;",
+			"href": "",
+			"spread": false,
+			"children": [
+				{
+					"title": "404页面",
+					"icon": "&#xe61c;",
+					"href": "page/404.html",
+					"spread": false
+				},
+				{
+					"title": "登录",
+					"icon": "&#xe609;",
+					"href": "page/login/login.html",
+					"spread": false,
+					"target": "_blank"
+				}
+			]
+		}
+]
