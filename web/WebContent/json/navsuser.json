@@ -13,7 +13,7 @@
 		},
 				{
 		    "title": "测试订单",
-			"icon": "&#xe698;",
+			"icon": "&#xe60a;",
 			"href": "page/order.html",
 			"spread": false
 		}
