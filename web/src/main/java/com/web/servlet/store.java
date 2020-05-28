@@ -24,6 +24,7 @@ public void doPost(HttpServletRequest request,
 	String num = request.getParameter("num");
 	String price = request.getParameter("price");
 	String time = request.getParameter("time");
+	String supplier = request.getParameter("supplier");
 	
 	  if(request.getSession().getAttribute("user")!=null&&request.getSession().getAttribute("password")!=null) { 
 			String admin = (String) request.getSession().getAttribute("user");
@@ -39,7 +40,7 @@ public void doPost(HttpServletRequest request,
           String sql1 = null;
           sql1 = "update food set num = num+"+num+" where idfood='"+FoodID+"'";
           if(stmt.executeUpdate(sql1)!=0) {
-        	  sql1 = "INSERT INTO `store` (`storename`, `storeprice`, `submitdate`, `num`, `idfood` ,`instoredate`) VALUES " + " ('"+admin+"','"+ price  +"',now(),"+ num +", '"+id+"' ,'"+time+"')";
+        	  sql1 = "INSERT INTO `store` (`storename`, `storeprice`, `submitdate`, `num`, `idfood` ,`instoredate` ,`supplier`) VALUES " + " ('"+admin+"','"+ price  +"',now(),"+ num +", '"+id+"' ,'"+time+"', '"+supplier+"')";
         	  if(stmt.executeUpdate(sql1)!=0)
         	  out.write('1');
               else out.write('0');
