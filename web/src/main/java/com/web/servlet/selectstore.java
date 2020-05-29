@@ -57,8 +57,8 @@ public void doPost(HttpServletRequest request,
     	  	      submitdate = rs.getTimestamp("submitdate");
     	  	      instoredate = rs.getDate("instoredate");
     	  	      supplier = rs.getString("supplier");
-    	  	  if(rs.isFirst())store+="{\"name\":\""+name+"\",\"supplier\":\""+price+"\",\"storeprice\":\""+price+"\",\"submitdate\":\""+submitdate+"\",\"num\":\""+num+"\",\"instoredate\":\""+instoredate+"\"}";
-    	  	  else store+=",{\"name\":\""+name+"\",\"supplier\":\""+price+"\",\"storeprice\":\""+price+"\",\"submitdate\":\""+submitdate+"\",\"num\":\""+num+"\",\"instoredate\":\""+instoredate+"\"}";
+    	  	  if(rs.isFirst())store+="{\"name\":\""+name+"\",\"supplier\":\""+supplier+"\",\"storeprice\":\""+price+"\",\"submitdate\":\""+submitdate+"\",\"num\":\""+num+"\",\"instoredate\":\""+instoredate+"\"}";
+    	  	  else store+=",{\"name\":\""+name+"\",\"supplier\":\""+supplier+"\",\"storeprice\":\""+price+"\",\"submitdate\":\""+submitdate+"\",\"num\":\""+num+"\",\"instoredate\":\""+instoredate+"\"}";
     	  	  }
     	    store+="]";
     	  out.write(store);
