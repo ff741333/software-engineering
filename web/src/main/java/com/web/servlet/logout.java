@@ -22,7 +22,7 @@ public void doPost(HttpServletRequest request,
 	String user = (String) request.getSession().getAttribute("user");
 	String psw = (String) request.getSession().getAttribute("password");
 	if(user==null||psw==null) {
-		response.sendRedirect("testLogin.html");
+		response.sendRedirect("/testLogin.html");
 	}
 	else {
 		 try{
@@ -39,15 +39,15 @@ public void doPost(HttpServletRequest request,
 	    		  status = rs.getString("identity");
 	    	  }
 	    	  if(status.equals("admin"))
-	    		  response.sendRedirect("indexadmin.html?userName="+user);
+	    		  response.sendRedirect("/indexadmin.html?userName="+user);
 	    	  else if(status.equals("customer"))
-	    		  response.sendRedirect("indexuser.html?userName="+user);
+	    		  response.sendRedirect("/indexuser.html?userName="+user);
 	    	  else 
-	    		  response.sendRedirect("indexsupplier.html?userName="+user);
+	    		  response.sendRedirect("/indexsupplier.html?userName="+user);
 	    	  rs.close();
 	          }
 	          else 
-	      		response.sendRedirect("testLogin.html");
+	      		response.sendRedirect("/testLogin.html");
 	  		
 	          stmt.close();
 	          conn.close(); 

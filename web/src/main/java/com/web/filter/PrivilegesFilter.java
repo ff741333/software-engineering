@@ -82,12 +82,12 @@ public class PrivilegesFilter implements Filter {
     	            res.flushBuffer(); 
     	    	  }
     	    	  else
-    	    		  res.sendRedirect("testLogin.html");
+    	    		  res.sendRedirect("/testLogin.html");
 
     	    	  rs.close();
     	          }
     	          else 
-    	      		res.sendRedirect("testLogin.html");
+    	      		res.sendRedirect("/testLogin.html");
     	  		
     	          stmt.close();
     	          conn.close(); 
