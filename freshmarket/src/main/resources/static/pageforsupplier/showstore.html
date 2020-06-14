@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>我的仓库</title>
+    <link rel="stylesheet" type="text/css" href="../layui/css/layui.css">
+    <script src="../layui/layui.js" charset="UTF-8"></script>
+</head>
+<body>
+<form class="layui-form" action="">
+    <div id="guide_panel">
+        <blockquote class="layui-elem-quote">我的仓库</blockquote>
+        <ul class="layui-timeline">
+            <li class="layui-timeline-item">
+                <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
+                <div class="layui-timeline-content layui-text">
+                    <h3 class="layui-timeline-title">订单查询</h3>
+                    <p>
+                    <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">品种：</label>
+                        <div class="layui-input-inline">
+                            <select name="Id" id="food" lay-search>
+                                <option value="">请选择蔬果</option>
+                            </select>
+                        </div>
+                    </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">日期范围：</label>
+                            <div class="layui-input-inline">
+                            <input type="text" name= "date" class="layui-input" id="test6" placeholder=" - "  lay-verify="dateRan">
+                        </div>
+                        </div>
+                        <button class="layui-btn" lay-submit lay-filter="select">查询</button>
+                    </div>
+                    </p>
+                </div>
+            </li>
+        </ul>
+    </div>
+</form>
+
+<div class="layui-form" id = "show">
+    <table class="layui-table">
+    </table>
+</div>
+</body>
+
+
+<script>
+    //Demo
+    layui.use(['form','table','laydate'], function(){
+        var form = layui.form;
+        var table = layui.table;
+        var laydate = layui.laydate;
+        var $ = layui.$
+
+        laydate.render({
+            elem: '#test6'
+            ,range: '~'
+        });
+        form.render();
+
+        $.ajax({
+            url: '../showfood',   //后台数据地址
+            success: function (data) {
+                $.each(data,function (index,item) {   //循环后台返回的json数据
+                    //new Option方法是新建一个option，第一个参数是需要显示的值，第二个参数是option的value值,然后append到下拉框中。
+                    $('#food').append(new Option(item.name,item.idfood));
+                })
+                form.render("select");
+            }
+        });
+
+        form.verify({
+            dateRan: function(value){ //value：表单的值、item：表单的DOM对象
+                var date = value.split(/[~-]/);
+                var start = {};
+                var end = {};
+
+                for(var i=0; i < date.length; i++){
+                    if(date[i].trim().length == 4){
+                        if($.isEmptyObject(start)){
+                            start.year=date[i];
+                            start.month=date[i+1];
+                            start.day=date[i+2];
+                        }
+                        else{
+                            end.year=date[i];
+                            end.month=date[i+1];
+                            end.day=date[i+2];
+                        }
+                    }
+                }
+                var reg = new RegExp("^(\\d{4})[-\\/](\\d{1}|0\\d{1}|1[0-2])([-\\/](\\d{1}|0\\d{1}|[1-2][0-9]|3[0-1]))*[ ][~][ ](\\d{4})[-\\/](\\d{1}|0\\d{1}|1[0-2])([-\\/](\\d{1}|0\\d{1}|[1-2][0-9]|3[0-1]))*$"); //至少2 个汉字
+                if(value!=""){
+                    if(!reg.test(value)) {
+                        return "时间范围格式错误！";
+                    }
+                }
+
+                if(parseInt(start.year)>parseInt(end.year)){
+                    return '时间范围年份错误';
+                }
+                else if(parseInt(start.year)==parseInt(end.year)){
+                    if(parseInt(start.month)>parseInt(end.month)){
+                        return '时间范围月份错误';
+                    }
+                    else if(parseInt(start.month)==parseInt(end.month)){
+                        if(parseInt(start.day)>parseInt(end.day)){
+                            return '时间范围天错误';
+                        }
+                    }
+                }
+            }
+        });
+
+        //监听提交
+        form.on('submit(select)', function(data){
+            $.ajax({
+                url:'../selectstore',
+                data:data.field,
+                dataType:'text',
+                type:'post',
+                success:function (data) {
+                    table.render({
+                        elem: '#show'
+                        ,id:'reload'
+                        ,data:JSON.parse(data)
+                        ,page:false
+                        ,async:false
+                        ,cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+                        ,cols: [[
+                            {field:'name', width:150, title:'种类'}
+                            ,{field:'supplier', width:150, title: '供应商名称', sort: true}
+                            ,{field:'num', width:150, title: '入库数量', sort: true}
+                            ,{field:'storeprice', width:150, title: '入库单价', sort: true}
+                            ,{field:'instoredate', title: '入库时间', sort: true}
+                            ,{field:'submitdate', title: '入库订单时间', sort: true}
+                        ]]
+                    });
+                }
+            })
+            return false;
+        });
+    });
+</script>
+

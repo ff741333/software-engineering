@@ -1,0 +1,21 @@
+{
+		"contentManagement": [{
+		    "title": "测试菜单",
+			"icon": "&#xe63c;",
+			"href": "item.html",
+			"spread": false
+		},
+		{
+		    "title": "测试购物车",
+			"icon": "&#xe698;",
+			"href": "shopcar.html",
+			"spread": false
+		},
+				{
+		    "title": "测试订单",
+			"icon": "&#xe60a;",
+			"href": "order.html",
+			"spread": false
+		}
+	]	
+}

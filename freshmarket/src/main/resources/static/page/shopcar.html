@@ -1,0 +1,274 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>购物车</title>
+    <link rel="stylesheet" type="text/css" href="../layui/css/layui.css">
+    <link rel="stylesheet" href="../css/test.css">
+    <script src="../layui/layui.js" charset="UTF-8"></script>
+</head>
+
+
+<body >
+
+<div id="row_panel">
+   <blockquote class="layui-elem-quote">
+   <h2 >购物车</h2>
+       </blockquote>
+        <table id="List1" lay-filter="List1"></table>
+         <div class="bottom-panel">
+        <span>总数量:</span><span style="color: red;margin-right: 15px" id="RechargeCount_TotalQty">---</span>
+        <span>总金额:</span><span style="color:red;margin-right: 20px" id="RechargeCount_TotalMoney">---</span>
+        <button type="button" class="layui-btn" style="float: right" id="submit">提交订单</button>
+        </div>
+</div>
+
+</body>
+<script type="text/javascript">
+
+
+layui.use(['table','layer','form','element'], function(){
+	  var table = layui.table;
+	  var layer = layui.layer;
+	  var $ = layui.$;
+	  var form = layui.form;
+	  var element = layui.element;
+	 // $('#RechargeCount_TotalQty').html("1");
+ /*  	 $.ajax({
+         url:'../totalcar',
+         dataType: 'text',
+         type:'post',
+         success:function (data) {
+             var da = JSON.parse(data);
+             $('#RechargeCount_TotalQty').html(da.sumnum);
+             $('#RechargeCount_TotalMoney').html(da.summoney);
+         }
+     })*/
+
+   	 
+	  $(function () {
+		  //提交订单
+		  $("#submit").click(function (data) {
+			  $.ajax({
+		          url:'../sendorder',
+		          data:data.field,
+		          dataType:'text',
+		          type:'post',
+		          async:false,
+		          success:function (data) {
+		        	  if(data=="1")layer.alert("提交成功");
+		        	  else layer.alert("提交失败");
+		        //	  treload();
+		        	  goodsDataStr = getdata();
+		  			  cardataArrey = JSON.parse(goodsDataStr);
+		  			 cardata = cardataArrey.data;
+		               ListTable1.reload(cardata);
+		               $.ajax({
+		     	          url:'../totalcar',
+		     	          dataType: 'text',
+		     	          type:'post',
+		     	          async:false,
+		     	          success:function (data) {
+		     	              var da = JSON.parse(data);
+		     	              $('#RechargeCount_TotalQty').html(da.sumnum);
+		     	              $('#RechargeCount_TotalMoney').html(da.summoney);
+		     	          }
+		     	      });
+		     		  
+
+		          }
+		      });
+	       	
+		      return false;
+		  });
+
+		  $.ajax({
+	          url:'../totalcar',
+	          dataType: 'text',
+	          type:'post',
+	          async:false,
+	          success:function (data) {
+	              var da = JSON.parse(data);
+	              $('#RechargeCount_TotalQty').html(da.sumnum);
+	              $('#RechargeCount_TotalMoney').html(da.summoney);
+	          }
+	      });
+		  
+		  function getdata(){
+			  	var da;
+			         $.ajax({
+				          url:'../showshopcar',
+				          dataType:'text',
+				          type:'post',
+				          async:false,
+				           success: function (data) {
+				                result=data;
+				            }
+				        });
+				        return result;
+			  }
+			 var goodsDataStr = getdata();
+			 var cardataArrey = JSON.parse(goodsDataStr);
+			 var cardata = cardataArrey.data;
+
+	      /**
+	       * List1数据表格渲染(商品列表)
+	       */
+	      var ListTable1 = table.render({
+	    	  id:'reload',  //重载id
+	    	  url:'../showshopcar',
+	        //  data:GoodsData,
+	          elem: '#List1',
+	          cellMinWidth: 95,
+	       //   width:700,
+	          //height: 'full-190',
+	          height: '460',
+	          minheight:430,
+	          cols: [
+	              [
+	              //  { field: 'foodsID', title: lan.cpbm, align: 'left' },
+	                  { field: 'foodsName', title: '名字', align: 'left' },
+	                  {
+	                    field: 'xprice', title: '单价', align: 'right', templet: function (d) {
+	                          return "<span style='color:red'>￥" + d.xprice + "</span>";
+	                      }
+	                  },
+	                  { field: 'num', title: '数量', align: 'right' },
+	                  {
+	                      title: '操作', align: "center", fixed: 'right', templet: function () {
+	                          // var html = '<a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="delet">删除</a> ';
+	                          var html = '<div class="layui-btn-group">\n' +
+	                              '\t<button type="button" class="layui-btn layui-btn-xs" lay-event="add">\n' +
+	                              '\t\t<i class="layui-icon">&#xe654;</i>\n' +
+	                              '\t</button>\n' +
+	                              '\t<button type="button" class="layui-btn layui-btn-xs" lay-event="sub">\n' +
+	                              '\t\t<i class="layui-icon">-</i>\n' +
+	                              '\t</button>\n' +
+	                              '\t<button type="button" class="layui-btn layui-btn-xs" lay-event="delete">\n' +
+	                              '\t\t<i class="layui-icon">&#xe640;</i>\n' +
+	                              '\t</button>\n' +
+	                              '</div>';
+	                          return html;
+	                      }
+	                  }
+	              ]
+	          ],
+	      });
+	      
+	      table.on('tool(List1)', function (obj, index) {
+	          var data = obj.data;
+	          /**
+	           * add
+	           */
+	          if (obj.event === 'add') {
+	        	  data.event=obj.event;
+	        	  $.ajax({
+	                  url:'../changeshopcar',
+	                  dataType: 'text',
+	                  type:'post',
+	                  data:data,
+	                  success:function (data) {
+	             //     	if(data=="1")layer.alert("ok");
+	           //       	else layer.alert("no");
+	             }	        	  
+	              });
+	              
+	              /**
+	               * 开始刷新购物车
+	               */
+	      		  goodsDataStr = getdata();
+	  			  cardataArrey = JSON.parse(goodsDataStr);
+	  			 cardata = cardataArrey.data;
+	               ListTable1.reload(cardata);
+
+	         	  $.ajax({
+	                   url:'../totalcar',
+	                   dataType: 'text',
+	                   type:'post',
+	                   async:false,
+	                   success:function (data) {
+	                       var da = JSON.parse(data);
+	                       $('#RechargeCount_TotalQty').html(da.sumnum);
+	                       $('#RechargeCount_TotalMoney').html(da.summoney);
+	                   }
+	               });
+
+	          }
+	          /**
+	           * sub
+	           */
+	          if (obj.event === 'sub') {
+	        	  data.event=obj.event;
+	        	  $.ajax({
+	                  url:'../changeshopcar',
+	                  dataType: 'text',
+	                  type:'post',
+	                  data:data,
+	                  success:function (data) {
+	           //       	if(data=="1")layer.alert("ok");
+	          //        	else layer.alert("no");
+	           }
+	              });
+	              /**
+	               * 开始刷新购物车
+	               */
+	     		  goodsDataStr = getdata();
+	  			  cardataArrey = JSON.parse(goodsDataStr);
+	  			 cardata = cardataArrey.data;
+	               ListTable1.reload(cardata);
+
+	         	  $.ajax({
+	                   url:'../totalcar',
+	                   dataType: 'text',
+	                   type:'post',
+	                   async:false,
+	                   success:function (data) {
+	                       var da = JSON.parse(data);
+	                       $('#RechargeCount_TotalQty').html(da.sumnum);
+	                       $('#RechargeCount_TotalMoney').html(da.summoney);
+	                   }
+	               });
+	          }
+	          /**
+	           * delet
+	           */
+	          if (obj.event === 'delete') {
+	        	  data.event=obj.event;
+	        	  $.ajax({
+	                  url:'../changeshopcar',
+	                  dataType: 'text',
+	                  type:'post',
+	                  data:data,
+	                  success:function (data) {
+	            //      	if(data=="1")layer.alert("ok");
+	          //        	else layer.alert("no");
+	            }
+	              });
+	              /**
+	               * 开始刷新购物车
+	               */
+	     		  goodsDataStr = getdata();
+	  			  cardataArrey = JSON.parse(goodsDataStr);
+	  			 cardata = cardataArrey.data;
+	               ListTable1.reload(cardata);
+
+	         	  $.ajax({
+	                   url:'../totalcar',
+	                   dataType: 'text',
+	                   type:'post',
+	                   async:false,
+	                   success:function (data) {
+	                       var da = JSON.parse(data);
+	                       $('#RechargeCount_TotalQty').html(da.sumnum);
+	                       $('#RechargeCount_TotalMoney').html(da.summoney);
+	                   }
+	               });
+	          }
+	      });
+	  });
+	  
+	  
+	  
+});
+</script>
+</html>
