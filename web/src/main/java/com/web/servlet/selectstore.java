@@ -36,6 +36,7 @@ public void doPost(HttpServletRequest request,
     	  float price = 0;
     	  int num = 0;
     	  String name = null;
+    	  String supplier = null;
 
     	  if(Id.isEmpty()&&date.isEmpty())
     	  	sql="select * from store,food where store.idfood = food.idfood order by submitdate desc";
@@ -55,8 +56,9 @@ public void doPost(HttpServletRequest request,
     	  	      num = rs.getInt("num");
     	  	      submitdate = rs.getTimestamp("submitdate");
     	  	      instoredate = rs.getDate("instoredate");
-    	  	  if(rs.isFirst())store+="{\"name\":\""+name+"\",\"storeprice\":\""+price+"\",\"submitdate\":\""+submitdate+"\",\"num\":\""+num+"\",\"instoredate\":\""+instoredate+"\"}";
-    	  	  else store+=",{\"name\":\""+name+"\",\"storeprice\":\""+price+"\",\"submitdate\":\""+submitdate+"\",\"num\":\""+num+"\",\"instoredate\":\""+instoredate+"\"}";
+    	  	      supplier = rs.getString("supplier");
+    	  	  if(rs.isFirst())store+="{\"name\":\""+name+"\",\"supplier\":\""+supplier+"\",\"storeprice\":\""+price+"\",\"submitdate\":\""+submitdate+"\",\"num\":\""+num+"\",\"instoredate\":\""+instoredate+"\"}";
+    	  	  else store+=",{\"name\":\""+name+"\",\"supplier\":\""+supplier+"\",\"storeprice\":\""+price+"\",\"submitdate\":\""+submitdate+"\",\"num\":\""+num+"\",\"instoredate\":\""+instoredate+"\"}";
     	  	  }
     	    store+="]";
     	  out.write(store);

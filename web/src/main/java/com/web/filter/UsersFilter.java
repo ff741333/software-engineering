@@ -36,7 +36,7 @@ public class UsersFilter implements Filter {
         	res.sendRedirect("logout");
         else if ((o == null||p==null)  && !url.endsWith("testLogin.html")    
             )   {   
-            res.sendRedirect("testLogin.html");
+            res.sendRedirect("/testLogin.html");
         } else  {
             chain.doFilter(request, response);     
             res.setHeader("Cache-Control","no-store");  

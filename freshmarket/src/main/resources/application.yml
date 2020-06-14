@@ -1,0 +1,53 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url:  jdbc:mysql://localhost:3306/netcar?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai    #mysql8
+    username: root
+    password: ',.Fgh123.'
+    name: test
+    type: com.alibaba.druid.pool.DruidDataSource
+    initial-size: 5
+    min-idle: 5
+    max-active: 20
+    max-wait: 30000
+    time-between-eviction-runs-millis: 60000
+    min-evictable-idle-time-millis: 300000
+    validation-query: select '1' from dual
+    test-while-idle: true
+    test-on-borrow: false
+    test-on-return: false
+    pool-prepared-statements: true
+    max-open-prepared-statements: 20
+    max-pool-prepared-statement-per-connection-size: 20
+
+mybatis-plus:
+  mapper-locations: classpath:/mapper/*Mapper.xml
+  #typeAliasesPackage: com.example.demo.store.entity
+  #typeEnumsPackage: com.example.demo.store.entity.enums
+  #  global-config:
+  #    id-type: 2
+  #    field-strategy: 2
+  #    db-column-underline: true
+  #    refresh-mapper: true
+  #    #capital-mode: true
+  #    #key-generator: com.baomidou.springboot.xxx
+  #    logic-delete-value: 0
+  #    logic-not-delete-value: 1
+  #    sql-injector: com.baomidou.mybatisplus.mapper.LogicSqlInjector
+  #    #meta-object-handler: com.baomidou.springboot.xxx
+  #    #sql-injector: com.baomidou.springboot.xxx
+  #  configuration:
+  #    map-underscore-to-camel-case: true
+  #    cache-enabled: false
+  global-config:
+   # id-type: 0  #0:数据库ID自增   1:用户输入id  2:全局唯一id(IdWorker)  3:全局唯一ID(uuid)
+    db-column-underline: false
+    refresh-mapper: true
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: true #配置的缓存的全局开关
+    lazyLoadingEnabled: true #延时加载的开关
+    multipleResultSetsEnabled: true #开启的话，延时加载一个属性时会加载该对象全部属性，否则按需加载属性
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #打印sql语句,调试
+
+

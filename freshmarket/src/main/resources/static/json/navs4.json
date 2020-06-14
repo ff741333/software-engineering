@@ -1,0 +1,35 @@
+[
+  {
+    "title": "菜单",
+    "icon": "icon-form",
+    "href": "page/news/newsList.html",
+    "spread": false
+  },
+  {
+    "title": "我的订单",
+    "icon": "&#xe698;",
+    "href": "page/img/images.html",
+    "spread": false
+  },
+  {
+    "title": "其他页面",
+    "icon": "&#xe630;",
+    "href": "",
+    "spread": false,
+    "children": [
+      {
+        "title": "404页面",
+        "icon": "&#xe61c;",
+        "href": "page/404.html",
+        "spread": false
+      },
+      {
+        "title": "登录",
+        "icon": "&#xe609;",
+        "href": "testLogin.html",
+        "spread": false,
+        "target": "_blank"
+      }
+    ]
+  }
+]
