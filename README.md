@@ -18,7 +18,7 @@ java1.8
 tomcat9.0
 
 开发使用springboot搭建
-后端：mybits
+后端：mybitsplus
 druid
 shiro
 前端：layui
