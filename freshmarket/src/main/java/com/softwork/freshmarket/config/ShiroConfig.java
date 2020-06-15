@@ -81,7 +81,7 @@ public class ShiroConfig {
         filterChainMap.put("/checkUser","anon");
 
         filterChainMap.put("/testLogin.html","anon");
-        filterChainMap.put("/tesRegister.html","anon");
+        filterChainMap.put("/testRegister.html","anon");
 
 
 
