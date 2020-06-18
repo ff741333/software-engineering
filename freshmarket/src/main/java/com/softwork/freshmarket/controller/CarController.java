@@ -38,15 +38,16 @@ public class CarController {
     public String addcar(@RequestParam(value = "Id") Integer idfood,
                          @RequestParam(value = "num") Integer num,
                          HttpSession httpSession){
-                Car car =new Car();
-                car.setDate(LocalDateTime.now());
-                car.setIdfood(idfood);
-                User user = (User)httpSession.getAttribute("user");
-                car.setIdUser(user.getIdUser());
-                car.setNumfood(num);
-                if(carService.saveOrUpdate(car))
-                    return "1";
-                else return "0";
+        Car car =new Car();
+        car.setDate(LocalDateTime.now());
+        car.setIdfood(idfood);
+        User user = (User)httpSession.getAttribute("user");
+        car.setIdUser(user.getIdUser());
+        car.setNumfood(num);
+        if(carService.saveOrUpdate(car))
+            return "1";
+        else return "0";
+
     }
 
     @RequestMapping("/changeshopcar")

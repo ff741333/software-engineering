@@ -1,0 +1,19 @@
+{
+  "contentManagement": [{
+    "title": "名单浏览",
+    "icon": "&#xe63c;",
+    "href": "member.html",
+    "spread": false
+  },{
+    "title": "添加人员",
+    "icon": "&#xe63c;",
+    "href": "addmember.html",
+    "spread": false
+  },{
+    "title": "查看报表",
+    "icon": "&#xe63c;",
+    "href": "charts.html",
+    "spread": false
+  }
+  ]
+}

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>预定信息</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" type="text/css" href="../layui/css/layui.css">
+	<script type="text/javascript" src="//api.map.baidu.com/api?v=2.0&ak=Ru4VQGSVRFw1eWl2LWyMMGuRC2Gqfvrn"></script> 
+    <script src="../layui/layui.js" charset="UTF-8"></script>
+    <script src="../js/echarts.min.js"></script>
+</head>
+<body>
+
+<div id="guide_panel">
+             <blockquote class="layui-elem-quote">
+                  <h2 >我的订单</h2>
+				<div class="layui-inline">  
+                <form class="layui-form" action="">
+                    <div class="layui-form-item"> 
+						<div class="layui-inline">
+							<label class="layui-form-label">品种：</label>
+								<div class="layui-input-inline">
+									<select name="Id" id="food" lay-verify="required" lay-search>
+										<option value="">请选择蔬果</option>
+									</select>
+								</div>
+						</div>
+						<div class="layui-inline">
+							<label class="layui-form-label">日期范围：</label>
+								<div class="layui-input-inline">
+									<input type="text" name= "date" class="layui-input" id="test6" placeholder=" - "  lay-verify="dateRan">
+								</div>
+						</div>		 							
+                        <div class="layui-inline">
+                            <button class="layui-btn" lay-submit lay-filter="select">查询</button>
+                        </div>
+                    </div>
+                </form >
+				 </div>
+				 
+             </blockquote> 
+            </div>
+			<div id="main" style="width: 600px;height:400px;"></div>
+
+
+
+        </li>
+    </ul>
+</div>
+
+
+
+
+
+<div id="row_panel">
+       <table class="layui-table" lay-filter = "show"  id = "show" ></table>
+</div>
+
+<link rel="stylesheet" href="../css/test.css">
+<script>
+
+var geolocation = new BMap.Geolocation();
+geolocation.getCurrentPosition(function(r){
+	if(this.getStatus() == BMAP_STATUS_SUCCESS){
+		sessionStorage.setItem('lng', r.point.lng); 
+		sessionStorage.setItem('lat', r.point.lat); 
+	//	alert("ok");
+	}
+	else {
+		alert('failed'+this.getStatus());
+	}        
+},{enableHighAccuracy: true});
+    //Demo
+    layui.use(['laydate','form','table'], function(){
+        var form = layui.form;
+        var table = layui.table;
+        var $ = layui.$;
+        var laydate = layui.laydate;
+        //监听提交
+        laydate.render({
+            elem: '#date'
+        });
+        form.on('submit(select)', function(data){
+            $.ajax({
+                url:'../selectorder',
+                dataType:'text',
+                data:{
+                    date:data.field.date,
+                    desk:data.field.desk,
+                    user:sessionStorage.getItem('user')
+                },
+                type:'post',
+                success:function (data) {
+                    table.render({
+                        elem: '#show'
+                        ,page:true
+                        ,data: JSON.parse(data)
+                        ,cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+                        ,cols: [[
+                            {field:'idexpense', title: '订单号'}
+                   
+                      ,{field:'cost', title: '消费金额',sort: true}
+                      ,{field:'date', title: '订单时间',sort: true}
+                      ,{
+                    	  field: 'status', title: '当前状态', align: 'right', templet: function (d) {
+                    		  if(d.status=="配送中")
+  	                          return "<span style='color:red'>" + d.status + "</span>";
+  	                          else 
+  	                          return d.status;
+  	                      }
+                      }
+                        ]]
+                    });
+
+                }
+            })
+            return false;
+        });
+        table.on('row(show)', function (obj) {
+        	var data = obj.data;
+        	sessionStorage.setItem('idexpense', data.idexpense);           
+            layer.open({
+                type: 2
+                ,title: false //不显示标题栏
+                ,closeBtn: false
+                ,area: ['700px','800px']
+                ,shade: 0.8
+                ,id: 'LAY_layuipro' //设定一个id，防止重复弹出
+          //      ,btnAlign: 'c'
+                ,moveType: 1 //拖拽模式，0或者1
+                ,content: 'map.html'//'<div class="table-panel" style="padding: 10px;">   <p style="text-align:center"> <font size="5" face="Verdana">订单详情</font> </p> <table id="List2" lay-filter="List2"></table><div id="allmap"></div></div>'//'<div style="padding: 10px; line-height: 22px; background-color: #393D49; color: #fff; font-weight: 700;"><img src="../images/userface1.jpg" alt="1"></div>'
+                ,success: function(layero){
+
+                }
+               ,cancel: function(){ 
+                    //右上角关闭回调
+                    
+                    //return false 开启该代码可禁止点击该按钮关闭
+                 }
+                ,closeBtn:1
+              });
+            //标注选中样式
+            obj.tr.addClass('layui-table-click').siblings().removeClass('layui-table-click');
+        });
+    });
+
+    /*
+
+    */
+</script>
+<script type="text/javascript">
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('main'));
+
+        // 指定图表的配置项和数据
+        var option = {
+            title: {
+                text: 'ECharts 入门示例'
+            },
+            tooltip: {},
+            legend: {
+                data:['销量']
+            },
+            xAxis: {
+                data: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"]
+            },
+            yAxis: {},
+            series: [{
+                name: '销量',
+                type: 'bar',
+                data: [5, 20, 36, 10, 10, 20]
+            }]
+        };
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+    </script>
+</body>
+<div id="show">
+
+</div>
+
+</html>
