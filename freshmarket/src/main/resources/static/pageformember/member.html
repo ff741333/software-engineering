@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>仓库</title>
+    <link rel="stylesheet" type="text/css" href="../layui/css/layui.css">
+    <link rel="stylesheet" href="../css/test.css">
+    <script src="../layui/layui.js" charset="UTF-8"></script>
+</head>
+<body>
+
+
+<div >
+    <div id="guide_panel">
+        <blockquote class="layui-elem-quote">
+            <h2 >成员列表</h2>
+            <div class="demoTable">
+                搜索成员：
+                <div class="layui-inline">
+                    <input class="layui-input" name="id" id="demoReload" autocomplete="off">
+                </div>
+                <button class="layui-btn" data-type="reload">搜索</button>
+				<button class="layui-btn" id="withExport">添加用户</button>
+            </div>
+        </blockquote>
+
+    </div>
+    <table id="List1" lay-filter="List1"></table>
+	<script type="text/html" id="List1Bar">
+		<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+		<!--<a class="layui-btn layui-btn-xs layui-btn-warm" lay-event="usable">已启用</a>-->
+	</script>
+</div>
+
+</body>
+
+<script>
+    layui.use(['table','layer'], function(){
+        var table = layui.table;
+        var layer = layui.layer;
+        //var $ = layui.$;
+		var $ = layui.jquery;
+
+        /*
+         * 数据表格:定义表头数据
+         * @type {{}}
+         */
+        var lan = {};
+        lan.cpbm = "用户名";
+        lan.cpmc = "用户密码";
+        lan.ckjj = "性别";
+        lan.spbh = "创建时间";
+        lan.spmc = "权限等级";
+        /**
+         *得到数据库中food表的数据
+         * showfood是servlet
+         */
+        /**
+         var goodsData = [];
+         /**
+         * 页面加载时执行
+         */
+
+        $(function () {
+            //  console.table(GoodsData);
+
+            /**
+             * List1数据表格渲染(商品列表)
+             */
+
+            var ListTable1 = table.render({
+                id:'reload',  //重载id
+                url:'../showusers',
+                //  data:GoodsData,
+                elem: '#List1',
+                cellMinWidth: 95,
+                //height: 'full-190',
+                height: '460',
+                minheight:430,
+                page: false,
+                cols: [
+                    [
+
+                        { field: 'UserName', title: lan.cpbm, align: 'left' },
+						{ field: 'Userpsw', title: lan.cpmc, align: 'left' },
+						{ field: 'identity', title: lan.spmc, align: 'left' },
+						{title: '操作', minWidth:175, templet:'#List1Bar',fixed:"right",align:"center"}
+                    ]
+                ],
+                initSort: {
+                    field: 'Xnum' //排序字段，对应 cols 设定的各字段名
+                    ,type: 'asc' //排序方式  asc: 升序、desc: 降序、null: 默认排序
+                }
+            });
+
+
+
+           //监听行单击事件（双击事件为：rowDouble）
+            table.on('row(List1)', function(obj){
+                var data = obj.data;
+                var imgstr = null;
+
+                layer.open({
+                    type: 2
+                    ,title: false //不显示标题栏
+                    ,closeBtn: false
+                    ,area:['500px','500px']
+                    ,shade: 0.8
+                    ,id: 'LAY_layuipro' //设定一个id，防止重复弹出
+                    //,btn: ['修改', '删除','取消']
+                    ,btnAlign: 'c'
+                    ,moveType: 1 //拖拽模式，0或者1
+                    ,content: 'editmember.html'
+                    ,success: function(layero,index){
+                        //changeHtml();
+						var body = layui.layer.getChildFrame('body', index);
+						console.log(body);
+						body.find(".UserName").val(data.UserName);  
+						body.find(".identity").val(data.identity);  
+						body.find(".Userpsw").val(data.Userpsw);  
+
+
+                    }
+                    ,yes: function(){
+                        var num;
+                        var price;
+                        if($("#num").val()=="")num=1;
+                        else num=$("#num").val();
+                        if($("#price").val()=="") layer.alert("请输入单价");
+                        else {
+                            price=$("#price").val();
+                            $.ajax({
+                                url:'../store',
+                                type:'post',
+                                dataType:'text',
+                                data:{
+                                    Id:data.FoodsID,
+                                    num:num,
+                                    price:price
+                                },
+                                success:function(data){
+                                    if(data == 1){
+
+                                        ListTable1.reload({ url: '../showfood2' });
+                                        layer.closeAll();
+                                        layer.msg("入库成功！");
+                                    }
+                                }
+                            });
+                        }
+
+
+
+                    }
+                    ,btn2: function(){
+                        //删除按钮
+                        $.ajax({
+                            url:'../deletefood',
+                            type:'post',
+                            dataType:'text',
+                            data:{
+                                Id:data.FoodsID,
+                            },
+                            success:function(data){
+                                if(data == 1){
+
+                                    ListTable1.reload({ url: '../showfood2' });
+                                    layer.closeAll();
+                                    layer.msg("删除成功！");
+                                }
+                            }
+                        });
+                    }
+                    ,cancel: function(){
+                        //右上角关闭回调
+
+                        //return false 开启该代码可禁止点击该按钮关闭
+                    }
+                    ,closeBtn:2
+                });
+                //标注选中样式
+                // obj.tr.addClass('layui-table-click').siblings().removeClass('layui-table-click');
+            });
+			
+            //查询菜品表
+            $ , active = {
+                reload: function(){
+                    var demoReload = $('#demoReload');
+
+                    //执行重载
+                    table.reload('reload', {
+                        page: {
+                            curr: 1 //重新从第 1 页开始
+                        }
+                        ,where: {
+                            key: {
+                                FoodName: demoReload.val()
+                            }
+                        }
+                    }, 'data');
+                },
+                food:function(){
+                    layer.open({
+                        type: 2
+                        ,title: false //不显示标题栏
+                        ,closeBtn: false
+                        ,area:['400px','500px']
+                        ,shade: 0.8
+                        ,id: 'LAY_layuipro' //设定一个id，防止重复弹出
+                        ,closeBtn:1
+                        ,btnAlign: 'c'
+                        ,moveType: 1 //拖拽模式，0或者1
+                        ,content:"addfood.html"
+                        ,success: function(layero,index){
+                            //changeHtml();
+                        }
+                        ,cancel: function(index, layero){
+                            ListTable1.reload({ url: '../showfood2' });
+                            layer.closeAll();
+                            return false;
+                        }
+                    });
+
+                }
+            };
+            $('.demoTable .layui-btn').on('click', function(){
+                var type = $(this).data('type');
+                active[type] ? active[type].call(this) : '';
+            });
+			$("#withExport").click(function(){
+				//layer.msg("点击事件");
+				layer.open({
+                type: 2
+                ,title: false //不显示标题栏
+                ,closeBtn: true
+                ,area: ['500px','500px']
+                ,shade: 0.8
+                ,id: 'LAY_layuipro' //设定一个id，防止重复弹出
+                //,btn: ['火速围观', '残忍拒绝']
+                ,btnAlign: 'c'
+                ,moveType: 1 //拖拽模式，0或者1
+				,content: "addmember.html"
+				,success: function(layero){
+
+				}
+				});				
+			});	
+        });
+    });
+
+</script>
+
+</html>

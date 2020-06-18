@@ -158,13 +158,12 @@ layui.use(['table','layer'], function(){
         	if($("#num").val()=="")num=1;
         	else num=$("#num").val();
             var j=-1;
-            var foodnum;
        	  for(var i=0;i<cardata.length;i++)
       	  {
        	  	if(data.foodsName==cardata[i].foodsName)
        	  		{       	 
        	  		cardata[i].num=parseInt(num)+parseInt(cardata[i].num,10);
-       	  		foodnum= cardata[i].num;
+       	  		num= cardata[i].num;
        	  		j=i;
        	  		}
       	  }
@@ -179,7 +178,7 @@ layui.use(['table','layer'], function(){
                  dataType:'text',
                  data:{
                      Id:data.idfood,
-                     num:num
+                     num:num,
                  },
                  success:function(data){
                  	if(data == 1){
