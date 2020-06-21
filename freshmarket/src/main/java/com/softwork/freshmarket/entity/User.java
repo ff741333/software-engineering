@@ -1,5 +1,6 @@
 package com.softwork.freshmarket.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
 import lombok.Data;
@@ -22,8 +23,10 @@ public class User implements Serializable {
     @TableId("idUser")
     private String idUser;
 
+    @TableField(value = "psw")
     private String psw;
 
+    @TableField(value = "identity")
     private String identity;
 
 

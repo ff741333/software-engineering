@@ -2,6 +2,9 @@ package com.softwork.freshmarket.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.softwork.freshmarket.entity.Food;
+import com.softwork.freshmarket.entity.FoodplusStore;
+import com.softwork.freshmarket.entity.LayuiTypeJson;
 import com.softwork.freshmarket.entity.User;
 import com.softwork.freshmarket.service.IUserService;
 import org.apache.shiro.SecurityUtils;
@@ -13,7 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 /**
  * <p>
@@ -28,6 +33,65 @@ public class UserController {
     @Autowired
     private IUserService userService;
 
+    @RequestMapping("/showusers")
+    public LayuiTypeJson<User> showfood(HttpServletRequest httpServletRequest){
+        List<User> Users;
+        String FoodName = null;
+        FoodName = httpServletRequest.getParameter("key[FoodName]");
+        if("".equals(FoodName)||FoodName==null)
+            Users=userService.list();
+        else {
+            QueryWrapper wrapper = new QueryWrapper();
+            wrapper.eq("idUser",FoodName);
+            Users=userService.list(wrapper);
+        }
+        //    foodplusStores.forEach(FoodplusStore::doFoodID);
+        LayuiTypeJson<User> layuiTypeJson = new LayuiTypeJson<>();
+        layuiTypeJson.setCount(Users.size());
+        layuiTypeJson.setCode(0);
+        layuiTypeJson.setMsg("");
+        layuiTypeJson.setData(Users);
+        return layuiTypeJson;
+    }
+    @RequestMapping("/addmember")
+    public String addmember(@RequestParam(value = "idUser") String name,
+                          @RequestParam(value = "psw") String password,
+                          @RequestParam(value = "identity") String level){
+        User user =new User();
+        user.setIdUser(name);
+        //food.setNum(0);
+        user.setPsw(password);
+        user.setIdentity(level);
+        if(userService.save(user))
+            return "添加成功!";
+        else return "0";
+    }
+    @RequestMapping("/editmember")
+    public String editmember(@RequestParam(value = "idUser") String name,
+                            @RequestParam(value = "psw") String password,
+                            @RequestParam(value = "identity") String level){
+        User user =new User();
+        user.setIdUser(name);
+        //food.setNum(0);
+        user.setPsw(password);
+        user.setIdentity(level);
+        if(userService.updateById(user))
+            return "修改成功!";
+        else return "0";
+    }
+    @RequestMapping("/deletemember")
+    public String deletemember(@RequestParam(value = "idUser") String name,
+                             @RequestParam(value = "psw") String password,
+                             @RequestParam(value = "identity") String level){
+        User user =new User();
+        user.setIdUser(name);
+        //food.setNum(0);
+        user.setPsw(password);
+        user.setIdentity(level);
+        if(userService.removeById(user))
+            return "删除成功!";
+        else return "0";
+    }
     @RequestMapping("/changepassword")
     public String changepassword(@RequestParam(value = "psw") String newpassword,
             HttpSession httpSession){

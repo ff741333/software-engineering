@@ -16,13 +16,13 @@
             <div class="layui-inline">
                 <label class="layui-form-label">用户名：</label>
                 <div class="layui-input-inline" style="width:250px;">
-                    <input name="name" type="text" lay-verify="required"  lay-reqtext="请输入名称" class="layui-input" id="name" placeholder="名称" autocomplete="off">
+                    <input name="idUser" type="text" lay-verify="required"  lay-reqtext="请输入名称" class="layui-input" id="name" placeholder="名称" autocomplete="off">
                 </div>
             </div>
             <div class="layui-inline">
                 <label class="layui-form-label">密码：</label>
                 <div class="layui-input-inline" style="width:250px;">
-                    <input name="password" type="text" lay-verify="required"  lay-reqtext="请输入名称" class="layui-input" id="name" placeholder="名称" autocomplete="off">
+                    <input name="psw" type="text" lay-verify="required"  lay-reqtext="请输入名称" class="layui-input" id="name" placeholder="名称" autocomplete="off">
                 </div>
             </div>
 
@@ -43,11 +43,11 @@
             <div class="layui-inline">
                 <label class="layui-form-label" >用户等级：</label>
                 <div class="layui-input-inline">
-                    <select name="level" lay-verify="required"  lay-reqtext="请输入菜品类别？" lay-search="">
+                    <select name="identity" lay-verify="required"  lay-reqtext="请输入菜品类别？" lay-search="">
                         <option value="">选择或输入用户等级</option>
-                        <option value="1">customer</option>
-                        <option value="2">supplier</option>
-                        <option value="3">admin</option>
+                        <option value="customer">customer</option>
+                        <option value="supplier">supplier</option>
+                        <option value="admin">admin</option>
                     </select>
                 </div>
             </div>

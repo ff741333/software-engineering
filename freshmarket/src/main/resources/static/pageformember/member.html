@@ -20,7 +20,7 @@
                     <input class="layui-input" name="id" id="demoReload" autocomplete="off">
                 </div>
                 <button class="layui-btn" data-type="reload">搜索</button>
-				<button class="layui-btn" id="withExport">添加用户</button>
+				<!--<button class="layui-btn" id="withExport">添加用户</button>-->
             </div>
         </blockquote>
 
@@ -81,14 +81,14 @@
                 cols: [
                     [
 
-                        { field: 'UserName', title: lan.cpbm, align: 'left' },
-						{ field: 'Userpsw', title: lan.cpmc, align: 'left' },
+                        { field: 'idUser', title: lan.cpbm, align: 'left' },
+						{ field: 'psw', title: lan.cpmc, align: 'left' },
 						{ field: 'identity', title: lan.spmc, align: 'left' },
 						{title: '操作', minWidth:175, templet:'#List1Bar',fixed:"right",align:"center"}
                     ]
                 ],
                 initSort: {
-                    field: 'Xnum' //排序字段，对应 cols 设定的各字段名
+                    field: 'identity' //排序字段，对应 cols 设定的各字段名
                     ,type: 'asc' //排序方式  asc: 升序、desc: 降序、null: 默认排序
                 }
             });
@@ -114,10 +114,10 @@
                     ,success: function(layero,index){
                         //changeHtml();
 						var body = layui.layer.getChildFrame('body', index);
-						console.log(body);
-						body.find(".UserName").val(data.UserName);  
-						body.find(".identity").val(data.identity);  
-						body.find(".Userpsw").val(data.Userpsw);  
+						console.log(data);
+						body.find(".idUser").val(data.idUser);
+						body.find(".identity").val(data.identity);
+						body.find(".psw").val(data.psw);
 
 
                     }
