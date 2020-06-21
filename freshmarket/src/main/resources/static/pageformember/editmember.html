@@ -16,19 +16,19 @@
             <div class="layui-inline">
                 <label class="layui-form-label">用户名：</label>
                 <div class="layui-input-inline" style="width:250px;">
-                    <input name="name" type="text" lay-verify="required"  lay-reqtext="请输入名称" class="layui-input UserName" id="name" placeholder="名称" autocomplete="off">
+                    <input name="idUser" type="text" lay-verify="required"  lay-reqtext="请输入名称" class="layui-input idUser" id="idUser" placeholder="名称" autocomplete="off">
                 </div>
             </div>
             <div class="layui-inline">
                 <label class="layui-form-label">密码：</label>
                 <div class="layui-input-inline" style="width:250px;">
-                    <input name="password" type="text" lay-verify="required"  lay-reqtext="请输入名称" class="layui-input Userpsw" id="name" placeholder="名称" autocomplete="off">
+                    <input name="psw" type="text" lay-verify="required"  lay-reqtext="请输入名称" class="layui-input psw" id="psw" placeholder="名称" autocomplete="off">
                 </div>
             </div>
             <div class="layui-inline">
                 <label class="layui-form-label" >用户等级：</label>
                 <div class="layui-input-inline">
-                    <select name="level" class="identity" lay-verify="required"  lay-reqtext="请输入菜品类别？" lay-search="">
+                    <select name="identity" class="identity" lay-verify="required"  lay-reqtext="请输入菜品类别？" lay-search="">
                         <option value="">选择或输入用户等级</option>
                         <option value="customer">customer</option>
                         <option value="supplier">supplier</option>
@@ -43,6 +43,7 @@
                 <div class="layui-inline">
                     <label class="layui-form-label" >  </label>
                     <button class="layui-btn" lay-submit lay-filter="edit">编辑用户信息</button>
+                    <button class="layui-btn-red" lay-submit lay-filter="delete">删除用户信息</button>
                 </div>
                 </br>
 
@@ -76,6 +77,18 @@
         form.on('submit(edit)', function(data){
             $.ajax({
                 url:'../editmember',
+                data:data.field,
+                dataType:'text',
+                type:'post',
+                success:function (data) {
+                    layer.alert(data);
+                }
+            })
+            return false;
+        });
+        form.on('submit(delete)', function(data){
+            $.ajax({
+                url:'../deletemember',
                 data:data.field,
                 dataType:'text',
                 type:'post',

@@ -11,37 +11,41 @@
     <script src="../js/echarts.min.js"></script>
 </head>
 <body>
-
-<div id="guide_panel">
-             <blockquote class="layui-elem-quote">
-                  <h2 >我的订单</h2>
-				<div class="layui-inline">  
-                <form class="layui-form" action="">
-                    <div class="layui-form-item"> 
-						<div class="layui-inline">
-							<label class="layui-form-label">品种：</label>
-								<div class="layui-input-inline">
-									<select name="Id" id="food" lay-verify="required" lay-search>
-										<option value="">请选择蔬果</option>
-									</select>
-								</div>
-						</div>
-						<div class="layui-inline">
-							<label class="layui-form-label">日期范围：</label>
-								<div class="layui-input-inline">
-									<input type="text" name= "date" class="layui-input" id="test6" placeholder=" - "  lay-verify="dateRan">
-								</div>
-						</div>		 							
+<form class="layui-form" action="">
+    <div id="guide_panel">
+        <blockquote class="layui-elem-quote">报表查询</blockquote>
+        <ul class="layui-timeline">
+            <li class="layui-timeline-item">
+                <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
+                <div class="layui-timeline-content layui-text">
+                    <h3 class="layui-timeline-title">销量查询</h3>
+                    <p>
+                    <div class="layui-form-item">
                         <div class="layui-inline">
-                            <button class="layui-btn" lay-submit lay-filter="select">查询</button>
+                            <label class="layui-form-label">品种：</label>
+                            <div class="layui-input-inline">
+                                <select name="Id" id="food" lay-search>
+                                    <option value="">请选择蔬果</option>
+                                </select>
+                            </div>
                         </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">日期范围：</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name= "date" class="layui-input" id="test6" placeholder=" - "  lay-verify="dateRan">
+                            </div>
+                        </div>
+                        <button class="layui-btn" lay-submit lay-filter="select">查询</button>
                     </div>
-                </form >
-				 </div>
-				 
-             </blockquote> 
-            </div>
-			<div id="main" style="width: 600px;height:400px;"></div>
+                    </p>
+                </div>
+            </li>
+        </ul>
+    </div>
+</form>
+<form class="layui-form" action=""> 
+        <div id="main2" style="width: 600px;height:400px;"></div>
+</form>
 
 
 
@@ -59,123 +63,154 @@
 
 <link rel="stylesheet" href="../css/test.css">
 <script>
-
-var geolocation = new BMap.Geolocation();
-geolocation.getCurrentPosition(function(r){
-	if(this.getStatus() == BMAP_STATUS_SUCCESS){
-		sessionStorage.setItem('lng', r.point.lng); 
-		sessionStorage.setItem('lat', r.point.lat); 
-	//	alert("ok");
-	}
-	else {
-		alert('failed'+this.getStatus());
-	}        
-},{enableHighAccuracy: true});
     //Demo
+    layui.use(['form','table','laydate'], function(){
+        var form = layui.form;
+        var table = layui.table;
+        var laydate = layui.laydate;
+        var $ = layui.$
+
+        laydate.render({
+            elem: '#test6'
+            ,range: '~'
+        });
+        form.render();
+
+        $.ajax({
+            url: '../showfood',   //后台数据地址
+            success: function (data) {
+                $.each(data,function (index,item) {   //循环后台返回的json数据
+                    //new Option方法是新建一个option，第一个参数是需要显示的值，第二个参数是option的value值,然后append到下拉框中。
+                    $('#food').append(new Option(item.name,item.idfood));
+                })
+                form.render("select");
+            }
+        });
+
+        form.verify({
+            dateRan: function(value){ //value：表单的值、item：表单的DOM对象
+                var date = value.split(/[~-]/);
+                var start = {};
+                var end = {};
+
+                for(var i=0; i < date.length; i++){
+                    if(date[i].trim().length == 4){
+                        if($.isEmptyObject(start)){
+                            start.year=date[i];
+                            start.month=date[i+1];
+                            start.day=date[i+2];
+                        }
+                        else{
+                            end.year=date[i];
+                            end.month=date[i+1];
+                            end.day=date[i+2];
+                        }
+                    }
+                }
+                var reg = new RegExp("^(\\d{4})[-\\/](\\d{1}|0\\d{1}|1[0-2])([-\\/](\\d{1}|0\\d{1}|[1-2][0-9]|3[0-1]))*[ ][~][ ](\\d{4})[-\\/](\\d{1}|0\\d{1}|1[0-2])([-\\/](\\d{1}|0\\d{1}|[1-2][0-9]|3[0-1]))*$"); //至少2 个汉字
+                if(value!=""){
+                    if(!reg.test(value)) {
+                        return "时间范围格式错误！";
+                    }
+                }
+
+                if(parseInt(start.year)>parseInt(end.year)){
+                    return '时间范围年份错误';
+                }
+                else if(parseInt(start.year)==parseInt(end.year)){
+                    if(parseInt(start.month)>parseInt(end.month)){
+                        return '时间范围月份错误';
+                    }
+                    else if(parseInt(start.month)==parseInt(end.month)){
+                        if(parseInt(start.day)>parseInt(end.day)){
+                            return '时间范围天错误';
+                        }
+                    }
+                }
+            }
+        });
+
+        //监听提交
+        form.on('submit(select)', function(data){
+            $.ajax({
+                url:'/selecttotal',
+                data:data.field,
+                //dataType:'text',
+                type:'post',
+                success:function (data) {
+                    console.log(data);
+                    var myChart = echarts.init(document.getElementById('main2'));
+
+                    // 指定图表的配置项和数据
+                    var option = {
+                        title: {
+                            text: '销量报表'
+                        },
+                        tooltip: {},
+                        legend: {
+                            data:['销量']
+                        },
+                        xAxis: {
+                            data: data.name
+                        },
+                        yAxis: {},
+                        series: [{
+                            name: '销量',
+                            type: 'bar',
+                            data: data.num
+                        }]
+                    };
+
+                    // 使用刚指定的配置项和数 据显示图表。
+                    myChart.setOption(option);
+                }
+            })
+            return false;
+        });
+    });
+</script>
+<!--<script type="text/javascript">
     layui.use(['laydate','form','table'], function(){
         var form = layui.form;
         var table = layui.table;
         var $ = layui.$;
         var laydate = layui.laydate;
         //监听提交
-        laydate.render({
-            elem: '#date'
-        });
-        form.on('submit(select)', function(data){
             $.ajax({
-                url:'../selectorder',
-                dataType:'text',
-                data:{
-                    date:data.field.date,
-                    desk:data.field.desk,
-                    user:sessionStorage.getItem('user')
-                },
-                type:'post',
-                success:function (data) {
-                    table.render({
-                        elem: '#show'
-                        ,page:true
-                        ,data: JSON.parse(data)
-                        ,cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
-                        ,cols: [[
-                            {field:'idexpense', title: '订单号'}
-                   
-                      ,{field:'cost', title: '消费金额',sort: true}
-                      ,{field:'date', title: '订单时间',sort: true}
-                      ,{
-                    	  field: 'status', title: '当前状态', align: 'right', templet: function (d) {
-                    		  if(d.status=="配送中")
-  	                          return "<span style='color:red'>" + d.status + "</span>";
-  	                          else 
-  	                          return d.status;
-  	                      }
-                      }
-                        ]]
-                    });
+                "url":"/daytotal",
+                 "type":"POST",
+                "success":function (data) {
+                    console.log(data);
+                    var myChart = echarts.init(document.getElementById('main'));
 
+                    // 指定图表的配置项和数据
+                    var option = {
+                        title: {
+                            text: '销量报表'
+                        },
+                        tooltip: {},
+                        legend: {
+                            data:['销量']
+                        },
+                        xAxis: {
+                            data: data.name
+                        },
+                        yAxis: {},
+                        series: [{
+                            name: '销量',
+                            type: 'bar',
+                            data: data.num
+                        }]
+                    };
+
+                    // 使用刚指定的配置项和数 据显示图表。
+                    myChart.setOption(option);
                 }
             })
-            return false;
+
         });
-        table.on('row(show)', function (obj) {
-        	var data = obj.data;
-        	sessionStorage.setItem('idexpense', data.idexpense);           
-            layer.open({
-                type: 2
-                ,title: false //不显示标题栏
-                ,closeBtn: false
-                ,area: ['700px','800px']
-                ,shade: 0.8
-                ,id: 'LAY_layuipro' //设定一个id，防止重复弹出
-          //      ,btnAlign: 'c'
-                ,moveType: 1 //拖拽模式，0或者1
-                ,content: 'map.html'//'<div class="table-panel" style="padding: 10px;">   <p style="text-align:center"> <font size="5" face="Verdana">订单详情</font> </p> <table id="List2" lay-filter="List2"></table><div id="allmap"></div></div>'//'<div style="padding: 10px; line-height: 22px; background-color: #393D49; color: #fff; font-weight: 700;"><img src="../images/userface1.jpg" alt="1"></div>'
-                ,success: function(layero){
 
-                }
-               ,cancel: function(){ 
-                    //右上角关闭回调
-                    
-                    //return false 开启该代码可禁止点击该按钮关闭
-                 }
-                ,closeBtn:1
-              });
-            //标注选中样式
-            obj.tr.addClass('layui-table-click').siblings().removeClass('layui-table-click');
-        });
-    });
-
-    /*
-
-    */
-</script>
-<script type="text/javascript">
-        // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('main'));
-
-        // 指定图表的配置项和数据
-        var option = {
-            title: {
-                text: 'ECharts 入门示例'
-            },
-            tooltip: {},
-            legend: {
-                data:['销量']
-            },
-            xAxis: {
-                data: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"]
-            },
-            yAxis: {},
-            series: [{
-                name: '销量',
-                type: 'bar',
-                data: [5, 20, 36, 10, 10, 20]
-            }]
-        };
-
-        // 使用刚指定的配置项和数据显示图表。
-        myChart.setOption(option);
-    </script>
+    </script>-->
 </body>
 <div id="show">
 
