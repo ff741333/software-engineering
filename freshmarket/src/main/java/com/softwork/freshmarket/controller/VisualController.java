@@ -29,15 +29,22 @@ import java.util.List;
         }
     @RequestMapping("/selecttotal")
     @ResponseBody
-    public DayTotal total(@RequestParam(value = "date") String date1){
+    public DayTotal total(@RequestParam(value = "Id") String Id,@RequestParam(value = "date") String date1){
         DayTotal stores;
-        if(date1.isEmpty()) {
+        String[] datearr = date1.split("~");
+        if(Id.isEmpty()&&date1.isEmpty()) {//蔬菜和日期均为空则显示全部销量
             stores = visualInterface.getDaytotal();
         }
-        else {
-            String[] datearr = date1.split("~");
+        else if(Id.isEmpty()&&!date1.isEmpty()){//蔬菜日期不为空则显示选定日期内的所有商品销量
+
             stores = visualInterface.total(datearr[0],datearr[1]);
+        }else if(!Id.isEmpty()&&!date1.isEmpty()){//蔬菜和日期均不为空则显示选定日期内的选定商品销量
+            stores = visualInterface.getotal(Id,datearr[0],datearr[1]);
+        }else{//蔬菜不为空日期为空则显示该蔬菜的全部销量
+
+            stores = visualInterface.gtotal(Id);
         }
+
         return stores;
     }
     }

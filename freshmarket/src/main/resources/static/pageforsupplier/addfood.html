@@ -13,14 +13,12 @@
 <blockquote class="layui-elem-quote">添加菜品</blockquote>
                 <form class="layui-form" action="">
                  <div class="layui-form-item">
-                   <div class="layui-inline">
                       <label class="layui-form-label">名称：</label>
                          <div class="layui-input-inline" style="width:250px;">
                               <input name="name" type="text" lay-verify="required"  lay-reqtext="请输入名称" class="layui-input" id="name" placeholder="名称" autocomplete="off">
                           </div>
                           </div>
-                             <br>
-                                <div class="layui-inline">
+                                <div class="layui-form-item" >
                                   <label class="layui-form-label" >类别：</label>
                                     <div class="layui-input-inline">
                                          <select name="type" lay-verify="required"  lay-reqtext="请输入菜品类别？" lay-search="">
@@ -29,51 +27,58 @@
                                           <option value="2">肉类</option>
                                           <option value="3">水果</option>
                                      </select>
-                                   </div>
+                                    </div>
                                 </div>
-                                
-                                
-                                <br>
-                                 <div class="layui-inline">
-                                  <label class="layui-form-label">单价：</label>
-                                        <div class="layui-input-block">
+                                     <div class="layui-form-item" >
+                                     <label class="layui-form-label">单价：</label>
+                                        <div class="layui-input-inline">
                                         <input type="text" name="price" lay-verify="required" lay-reqtext="请输入单价" placeholder="单价" autocomplete="off" class="layui-input">  
-                                      </div>                                                                      
-                                  <div class="layui-inline">
-                                 <button class="layui-btn" lay-submit lay-filter="add">添加蔬肉信息</button>  
-                                 </div>
-                                  </br>
-                            
-                            
-                             </div>
-                   
-                   
-                          </form >
-</body>
+                                      </div>
+                                        </div>
+                                     <div class="layui-form-item layui-form-text">
+                                         <label class="layui-form-label">蔬果描述</label>
+                                         <div class="layui-input-block">
+                                             <textarea placeholder="请输入描述" name="description" class="layui-textarea"></textarea>
+                                         </div>
+                                     </div>
+                                         <div class="layui-form-item">
+                                             <div class="layui-input-block">
+                                                 <button class="layui-btn" lay-submit lay-filter="add">添加蔬肉信息</button>
+                                             </div>
 
-
- 
+                                         </div>
+                </form>
+</div>
 
 <script>
-//Demo
-layui.use(['form','table'], function(){
-  var form = layui.form;
-  var $ = layui.$;
-  //监听提交 
- 
-  form.on('submit(add)', function(data){
-	  $.ajax({
-          url:'../addfood',
-          data:data.field,
-          dataType:'text',
-          type:'post',
-          success:function (data) {
-        	  layer.alert(data);
-          }
-      })
-      return false;
-  });
-});
+    //Demo
+    layui.use(['form','table'], function(){
+        var form = layui.form;
+        var $ = layui.$;
+        //监听提交
+
+        form.on('submit(add)', function(data){
+            $.ajax({
+                url:'../addfood',
+                data:data.field,
+                dataType:'text',
+                type:'post',
+                success:function (data) {
+                    if(data==1)
+                    layer.alert("添加成功");
+                    else layer.alert("添加失败");
+                }
+            })
+            return false;
+        });
+    });
 
 </script>
+
+</body></html>
+
+
+
+ 
+
 

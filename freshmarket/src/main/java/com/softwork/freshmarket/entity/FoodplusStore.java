@@ -41,6 +41,10 @@ public class FoodplusStore implements Serializable {
     @TableField(value = "num")
     private Integer Xnum;
 
+    @TableField(value = "description")
+    private String description;
+
+
     private LocalDate laststoredate;
 
    /* private Integer FoodsId;

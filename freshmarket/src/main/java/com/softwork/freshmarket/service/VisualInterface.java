@@ -9,4 +9,6 @@ public interface VisualInterface {
     public DayTotal getDaytotal();
 
     DayTotal total(String d1,String d2);
+    DayTotal getotal(String id,String d1,String d2);
+    DayTotal gtotal(String id);
 }
