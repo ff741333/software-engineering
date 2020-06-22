@@ -45,5 +45,35 @@ private VisualMapper visualMapper;
         daytotal.setNum(num);
         return daytotal;
     }
+
+    @Override
+    public DayTotal getotal(String id, String date1, String date2) {
+        List<totalcol> list =visualMapper.findFoodFromTotalcol(id,date1,date2);
+        List<String> name =new ArrayList<>();
+        List<Integer> num =new ArrayList<>();
+        for (totalcol totalcol : list) {
+            name.add(totalcol.getName());
+            num.add(totalcol.getNum());
+        }
+        DayTotal daytotal = new DayTotal();
+        daytotal.setName(name);
+        daytotal.setNum(num);
+        return daytotal;
+    }
+
+    @Override
+    public DayTotal gtotal(String id) {
+        List<totalcol> list =visualMapper.findFromTotalcol(id);
+        List<String> name =new ArrayList<>();
+        List<Integer> num =new ArrayList<>();
+        for (totalcol totalcol : list) {
+            name.add(totalcol.getName());
+            num.add(totalcol.getNum());
+        }
+        DayTotal daytotal = new DayTotal();
+        daytotal.setName(name);
+        daytotal.setNum(num);
+        return daytotal;
+    }
 }
 

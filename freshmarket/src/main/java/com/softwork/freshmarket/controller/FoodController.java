@@ -43,12 +43,14 @@ public class FoodController {
     @RequestMapping("/addfood")
     public String addfood(@RequestParam(value = "name") String name,
                           @RequestParam(value = "type") String type,
-                          @RequestParam(value = "price") Float price){
+                          @RequestParam(value = "price") Float price,
+                          @RequestParam(value = "description",required = false) String description){
         Food food =new Food();
         food.setName(name);
         food.setNum(0);
         food.setType(type);
         food.setPrice(price);
+        food.setDescription(description);
         if(foodService.save(food))
             return "1";
         else return "0";

@@ -17,9 +17,9 @@ import java.util.List;
  */
 public interface FoodMapper extends BaseMapper<Food> {
 
-    @Select("select food.idfood , food.num as Xnum, name as FoodsName,type , imgurl as FoodsImg,max(instoredate) as laststoredate ,price as Xprice from food left join store on food.idfood = store.idfood group by idfood")
+    @Select("select food.idfood , food.num as Xnum, name as FoodsName,type , imgurl as FoodsImg,max(instoredate) as laststoredate ,price as Xprice , description from food left join store on food.idfood = store.idfood group by idfood")
     public List<FoodplusStore> selectFoodplusStoreAll();
 
-    @Select("select food.idfood , food.num as Xnum, name as FoodsName,type , imgurl as FoodsImg,max(instoredate) as laststoredate ,price as Xprice  from food left join store on food.idfood = store.idfood where name like CONCAT('%',#{name},'%') group by idfood")
+    @Select("select food.idfood , food.num as Xnum, name as FoodsName,type , imgurl as FoodsImg,max(instoredate) as laststoredate ,price as Xprice , description from food left join store on food.idfood = store.idfood where name like CONCAT('%',#{name},'%') group by idfood")
     public List<FoodplusStore> selectFoodplusStorebyFoodName(String name);
 }

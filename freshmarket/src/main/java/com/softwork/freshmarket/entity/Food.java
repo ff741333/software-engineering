@@ -36,4 +36,6 @@ public class Food implements Serializable {
 
     private Integer num;
 
+    private String description;
+
 }
